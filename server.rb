@@ -76,14 +76,14 @@ get '/:provider/friendlist.gexf' do
   @node_me = graph.create_node label: @me['user_info']['info']['name'], :id => @me['user_info']['uid']
   
   @friends.each do |f|
-    find_or_create @node_me, graph, f
-    # node_friend = graph.nodes[f['id']]
-    # if node_friend.nil?
-    #   @friend = graph.create_node label: f['name'], :id => f['id']
+    # find_or_create @node_me, graph, f
+    node_friend = graph.nodes[f['id']]
+    if node_friend.nil?
+      @friend = graph.create_node label: f['name'], :id => f['id']
 
-    # end  
+    end  
 
-    # @node_me.connect_to graph.nodes[f['id']]
+    @node_me.connect_to graph.nodes[f['id']]
 
   
   end
