@@ -59,7 +59,7 @@ end
 get '/:provider/friendlist.gexf' do
   auth_filter
 
-  #generating Friendslist graph
+  #generating Friendlist graph
 
   @graph = get_graph_for_user session[:token]
   @friends = get_my_friends session[:uid], @graph
@@ -78,15 +78,6 @@ get '/:provider/friendlist.gexf' do
   
   @friends.each do |f|
     find_or_create @node_me, graph, f
-    # node_friend = graph.nodes[f['id']]
-    # if node_friend.nil?
-    #   @friend = graph.create_node label: f['name'], :id => f['id']
-
-    # end  
-
-    # @node_me.connect_to graph.nodes[f['id']]
-
-  
   end
 
   serializer = GEXF::XmlSerializer.new(graph)

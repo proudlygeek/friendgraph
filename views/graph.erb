@@ -11,7 +11,7 @@
       // Instanciate sigma.js and customize rendering :
       var sigInst = sigma.init(document.getElementById('sigma')).drawingProperties({
         defaultLabelColor: '#fff',
-        defaultLabelSize: 18,
+        defaultLabelSize: 9,
         defaultEdgeColor: 'green',
         defaultNodeColor: 'green',
         defaultLabelBGColor: '#fff',
@@ -22,8 +22,8 @@
       }).graphProperties({
         minNodeSize: 0.5,
         maxNodeSize: 5,
-        minEdgeSize: 0.3,
-        maxEdgeSize: 0.3
+        minEdgeSize: 0.8,
+        maxEdgeSize: 1.8
       }).mouseProperties({
         maxRatio: 32
       });
@@ -62,6 +62,7 @@
       }else{
         n.color = n.attr['grey'] ? n.attr['true_color'] : n.color;
         n.attr['grey'] = 0;
+        n.forceLabel = true;
       }
     }).draw(2,2,2);
   }).bind('outnodes',function(){
@@ -71,6 +72,7 @@
     }).iterNodes(function(n){
       n.color = n.attr['grey'] ? n.attr['true_color'] : n.color;
       n.attr['grey'] = 0;
+      n.forceLabel = false;
     }).draw(2,2,2);
   });
 
