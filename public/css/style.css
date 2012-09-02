@@ -1,16 +1,17 @@
 @font-face {
-    font-family: 'lobster_1.3regular';
-    src: url('../font/lobster_1.3-webfont.eot');
-    src: url('../font/lobster_1.3-webfont.eot?#iefix') format('embedded-opentype'),
-    url('../font/lobster_1.3-webfont.woff') format('woff'),
-    url('../font/lobster_1.3-webfont.ttf') format('truetype'),
-    url('../font/lobster_1.3-webfont.svg#lobster_1.3regular') format('svg');
+    font-family: 'vtks_animal_2regular';
+    src: url('../font/vtks_animal_2-webfont.eot');
+    src: url('../font/vtks_animal_2-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/vtks_animal_2-webfont.woff') format('woff'),
+         url('../font/vtks_animal_2-webfont.ttf') format('truetype'),
+         url('../font/vtks_animal_2-webfont.svg#vtks_animal_2regular') format('svg');
     font-weight: normal;
     font-style: normal;
 
 }
 
 body {
+	background-color: #787878;
 	
 }
 
@@ -33,18 +34,18 @@ a.flat:visited {
 }
 
 .logo {
-	font: 110px 'lobster_1.3regular', Arial, sans-serif;
+	font: 110px 'vtks_animal_2regular', Arial, sans-serif;
 
 }
 
 a.fonted{
-    font-family: 'lobster_1.3regular', Arial, sans-serif;
+    font-family: 'vtks_animal_2regular', Arial, sans-serif;
     font-size: 50px;
     padding-bottom: 15px;
 }
 
 h2.seekr {
-	font: 42px 'lobster_1.3regular', Arial, sans-serif;
+	font: 42px 'vtks_animal_2regular', Arial, sans-serif;
 	font-weight: normal;
 	text-align: center;
 }
