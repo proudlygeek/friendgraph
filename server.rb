@@ -139,7 +139,7 @@ end
 
 #----------------getters with caching------------------------------
 def get_connections user_id, graph
-  key = Digest::MD5.hexdigest(user_id + @node_me.to_s)
+  key = Digest::MD5.hexdigest(user_id + @node_me.id.to_s)
   friends = settings.cache.get(key)
 
   if friends == nil
