@@ -21,9 +21,9 @@ configure do
 end
 
 use OmniAuth::Builder do
-  #provider :facebook, '325586187536644','005df4de563a482f9551278ce79e4395', :scope => 'user_location,friends_location'
+  provider :facebook, '276684505778296','5c800d3d9c1c1e709d7195da93e7dce7', :scope => 'user_location,friends_location'
   #for local usage this facebook app return at http://localhost:4567/
-  provider :facebook, '477713652248633','3cfa969935faf59a6705856bd4ba97ca'
+  #provider :facebook, '477713652248633','3cfa969935faf59a6705856bd4ba97ca'
 end
 
 get '/' do
