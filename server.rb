@@ -8,11 +8,10 @@ require 'omniauth-facebook'
 require 'koala'
 require 'dalli'
 require 'redis'
-require 'open-uri'
 require 'gexf'
 require 'memcachier'
 
-
+#--------------Sinatra-Application---------------------------------
 configure do
   set :sessions, true
   set :inline_templates, true
@@ -22,9 +21,9 @@ configure do
 end
 
 use OmniAuth::Builder do
-  provider :facebook, '276684505778296','5c800d3d9c1c1e709d7195da93e7dce7', :scope => 'user_location,friends_location'
+  #provider :facebook, '276684505778296','5c800d3d9c1c1e709d7195da93e7dce7', :scope => 'user_location,friends_location'
   #for local usage this facebook app return at http://localhost:4567/
-  #provider :facebook, '477713652248633','3cfa969935faf59a6705856bd4ba97ca'
+  provider :facebook, '477713652248633','3cfa969935faf59a6705856bd4ba97ca'
 end
 
 get '/' do
@@ -54,6 +53,8 @@ get '/auth/:provider/callback' do
   redirect to "/home"
 end
 
+
+# construct a friendlist graph and return an gexf file
 get '/:provider/friendlist.gexf' do
   auth_filter
 
@@ -75,18 +76,21 @@ get '/:provider/friendlist.gexf' do
   @node_me = graph.create_node label: @me['user_info']['info']['name'], :id => @me['user_info']['uid']
   
   @friends.each do |f|
-    unless f.nil?
-      @friend = graph.create_node label: f['name'], :id => f['id']
-      @node_me.connect_to @friend
-    end
+    find_or_create @node_me, graph, f
+    # node_friend = graph.nodes[f['id']]
+    # if node_friend.nil?
+    #   @friend = graph.create_node label: f['name'], :id => f['id']
+
+    # end  
+
+    # @node_me.connect_to graph.nodes[f['id']]
+
+  
   end
 
   # @friends.each do |f|
-
   #   @node_me.connect_to graph.nodes[f['id']]  
-
   #   friends_of_my_friend = get_friendlist_for_user(f['id'], @graph)
-
   #   friends_of_my_friend.each do |fomf|
   #     graph.nodes[f['id']].connect_to graph.nodes[fomf['id']]
   #   end
@@ -116,7 +120,31 @@ get '/logout' do
   session[:authenticated] = false
   redirect '/'
 end
+#------------------------------------------------------------------
 
+
+
+#------------node utilities----------------------------------------
+def find_or_create me, graph, friend 
+
+  node = graph.nodes[friend['id']]
+
+  if node.nil?
+    node = graph.create_node label: friend['name'], :id => friend['id']
+
+    friendlist = get_friendlist_for_user friend['id'], @graph
+    unless friendlist.nil?
+      friendlist.each do |f| 
+        node_friend = find_or_create node, graph, f
+        node_friend.connect_to node
+      end  
+    end
+  end
+  me.connect_to node
+  node
+end
+
+#----------------getters with caching------------------------------
 def get_friendlist_for_user user_id, graph
   friends = settings.cache.get(user_id)
 
@@ -150,6 +178,10 @@ def get_graph_for_user token
   graph
 end
 
+#------------------------------------------------------------------
+
+#---------------filters--------------------------------------------
+
 def auth_filter
   redirect '/' unless (session[:authenticated] && session[:token])
 end
@@ -157,3 +189,5 @@ end
 def skip_auth
   redirect '/home' if (session[:authenticated] && session[:token])
 end
+
+#------------------------------------------------------------------
