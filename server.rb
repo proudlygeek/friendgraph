@@ -21,9 +21,9 @@ configure do
 end
 
 use OmniAuth::Builder do
-  provider :facebook, '276684505778296','5c800d3d9c1c1e709d7195da93e7dce7', :scope => 'user_location,friends_location'
+  #provider :facebook, '276684505778296','5c800d3d9c1c1e709d7195da93e7dce7', :scope => 'user_location,friends_location'
   #for local usage this facebook app return at http://localhost:4567/
-  #provider :facebook, '477713652248633','3cfa969935faf59a6705856bd4ba97ca'
+  provider :facebook, '477713652248633','3cfa969935faf59a6705856bd4ba97ca'
 end
 
 get '/' do
@@ -71,12 +71,12 @@ get '/:provider/friendlist.gexf' do
   graph = GEXF::Graph.new
   graph.define_node_attribute(:color)
   
-  node_me = graph.create_node label: @me['user_info']['info']['name'], :id => @me['user_info']['uid'], :color => 'red'
+  @node_me = graph.create_node label: @me['user_info']['info']['name'], :id => @me['user_info']['uid']
   
   @friends.each do |f|
     unless f.nil?
-      friend = graph.create_node label: f['name'], :id => f['id']
-      node_me.connect_to graph.nodes[friend]
+      @friend = graph.create_node label: f['name'], :id => f['id']
+      @node_me.connect_to @friend
     end
   end
 
