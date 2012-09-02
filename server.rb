@@ -75,19 +75,20 @@ get '/:provider/friendlist.gexf' do
   
   @friends.each do |f|
     friend = graph.create_node label: f['name'], :id => f['id']  
+    node_me.connect_to graph.nodes[friend]
   end
 
-  @friends.each do |f|
+  # @friends.each do |f|
 
-    node_me.connect_to graph.nodes[f['id']]  
+  #   node_me.connect_to graph.nodes[f['id']]  
 
-    friends_of_my_friend = get_friendlist_for_user(f['id'], @graph)
+    # friends_of_my_friend = get_friendlist_for_user(f['id'], @graph)
 
-    friends_of_my_friend.each do |fomf|
-      graph.nodes[f['id']].connect_to graph.nodes[fomf['id']]
-    end
+    # friends_of_my_friend.each do |fomf|
+    #   graph.nodes[f['id']].connect_to graph.nodes[fomf['id']]
+    # end
     
-  end
+  # end
 
   serializer = GEXF::XmlSerializer.new(graph)
 
