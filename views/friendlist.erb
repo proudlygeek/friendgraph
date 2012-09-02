@@ -1,0 +1,28 @@
+<div class='row-fluid'>
+  <div class="span3">
+    <h2 class="seekr"><img src="/images/locate.png">Seekr</h2>
+    <a class="find-me btn btn-inverse btn-primary btn-large btn-block" href="#" class="me"><i class="icon-screenshot icon-white"></i>Find Me</a>
+    <table class='table .btn-block centered table-striped table-bordered'>
+      <thead>
+        <tr>
+          <th><i class="icon-globe"></i>Find My Friends (<%= @my_friends.length %>)</th>
+        </tr>
+      </thead>
+      <% @my_friends.each.with_index do |f, idx| %>
+       <tr>
+        <td><a href="#" id="<%= idx %>" class="friend"><%= f['user_info']['info']['name'] %></a></td>
+       </tr>
+      <% end %>
+    </table>  
+  </div>
+  <div id="map" class='span9'>
+  </div>
+</div>
+
+<% content_for :javascripts do %>
+  <script type="text/javascript">
+      var friends = <%= @my_friends.to_json %>;
+      var me = <%= @me.to_json %>;
+  </script>
+  <script type="text/javascript" src="/js/script.js"></script>
+<% end %>

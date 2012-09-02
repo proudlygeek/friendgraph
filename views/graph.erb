@@ -1,0 +1,48 @@
+
+<div class="span12">
+  <div id="sigma" class="sigma-expanded">
+  </div>
+</div>
+
+<% content_for :javascripts do %>
+  <script type="text/javascript">
+
+    function init() {
+      // Instanciate sigma.js and customize rendering :
+      var sigInst = sigma.init(document.getElementById('sigma')).drawingProperties({
+        defaultLabelColor: '#fff',
+        defaultLabelSize: 18,
+        defaultEdgeColor: 'green',
+        defaultNodeColor: 'green',
+        defaultLabelBGColor: '#fff',
+        defaultLabelHoverColor: '#000',
+        defaultLabelFontSize: '5px', 
+        labelThreshold: 6,
+        defaultEdgeType: 'straight'
+      }).graphProperties({
+        minNodeSize: 0.5,
+        maxNodeSize: 5,
+        minEdgeSize: 0.3,
+        maxEdgeSize: 0.3
+      }).mouseProperties({
+        maxRatio: 32
+      });
+     
+      // Parse a GEXF encoded file to fill the graph
+      // (requires "sigma.parseGexf.js" to be included)
+      sigInst.parseGexf('/facebook/friendlist.gexf');
+     
+      // Draw the graph :
+      sigInst.draw();
+      
+      $('.wait').fadeOut();
+    }
+     
+    if (document.addEventListener) {
+      document.addEventListener("DOMContentLoaded", init, false);
+    } else {
+      window.onload = init;
+    }
+
+  </script>
+<% end %>
