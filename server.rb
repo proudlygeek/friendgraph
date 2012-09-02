@@ -10,6 +10,7 @@ require 'dalli'
 require 'redis'
 require 'gexf'
 require 'memcachier'
+require 'digest/md5'
 
 #--------------Sinatra-Application---------------------------------
 configure do
@@ -76,26 +77,17 @@ get '/:provider/friendlist.gexf' do
   @node_me = graph.create_node label: @me['user_info']['info']['name'], :id => @me['user_info']['uid']
   
   @friends.each do |f|
-    # find_or_create @node_me, graph, f
-    node_friend = graph.nodes[f['id']]
-    if node_friend.nil?
-      @friend = graph.create_node label: f['name'], :id => f['id']
+    find_or_create @node_me, graph, f
+    # node_friend = graph.nodes[f['id']]
+    # if node_friend.nil?
+    #   @friend = graph.create_node label: f['name'], :id => f['id']
 
-    end  
+    # end  
 
-    @node_me.connect_to graph.nodes[f['id']]
+    # @node_me.connect_to graph.nodes[f['id']]
 
   
   end
-
-  # @friends.each do |f|
-  #   @node_me.connect_to graph.nodes[f['id']]  
-  #   friends_of_my_friend = get_friendlist_for_user(f['id'], @graph)
-  #   friends_of_my_friend.each do |fomf|
-  #     graph.nodes[f['id']].connect_to graph.nodes[fomf['id']]
-  #   end
-    
-  # end
 
   serializer = GEXF::XmlSerializer.new(graph)
 
@@ -132,11 +124,12 @@ def find_or_create me, graph, friend
   if node.nil?
     node = graph.create_node label: friend['name'], :id => friend['id']
 
-    friendlist = get_friendlist_for_user friend['id'], @graph
+    friendlist = get_connections friend['id'], @graph
     unless friendlist.nil?
       friendlist.each do |f| 
-        node_friend = find_or_create node, graph, f
+        node_friend = graph.nodes[f['id']] || graph.create_node(label: f['name'], :id => f['id']) 
         node_friend.connect_to node
+        node_friend.connect_to me
       end  
     end
   end
@@ -145,23 +138,25 @@ def find_or_create me, graph, friend
 end
 
 #----------------getters with caching------------------------------
-def get_friendlist_for_user user_id, graph
-  friends = settings.cache.get(user_id)
+def get_connections user_id, graph
+  key = Digest::MD5.hexdigest(user_id + @node_me.to_s)
+  friends = settings.cache.get(key)
 
   if friends == nil
     friends = @graph.get_connections("me", "mutualfriends/#{user_id}")
-    settings.cache.set(user_id, friends, 3500)
+    settings.cache.set(key, friends, 3500)
   end
 
   friends
 end
 
 def get_my_friends user_id, graph
-  friends = settings.cache.get(user_id)
+  key = Digest::MD5.hexdigest(user_id)
+  friends = settings.cache.get(key)
 
   if friends == nil
     friends = @graph.get_connections("me", "friends")
-    settings.cache.set(user_id, friends, 3500)
+    settings.cache.set(key, friends, 3500)
   end
 
   friends
