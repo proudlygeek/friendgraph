@@ -10,6 +10,7 @@ require 'dalli'
 require 'redis'
 require 'open-uri'
 require 'gexf'
+require 'memcachier'
 
 
 configure do
