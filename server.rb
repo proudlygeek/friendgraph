@@ -34,7 +34,7 @@ use OmniAuth::Builder do
 end
 
   redis_connection_string =  ENV['REDIS_CONNECTION_STRING'] 
-  uri = URI.parse(settings.redis_connection_string)
+  uri = URI.parse(redis_connection_string)
   REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
 
 get '/' do
