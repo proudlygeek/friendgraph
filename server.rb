@@ -2,6 +2,7 @@ require 'rubygems'
 require 'sinatra'
 require "sinatra/content_for"
 require 'sinatra/streaming'
+require 'sinatra/config_file'
 require 'json'
 require 'omniauth'
 require 'omniauth-facebook'
@@ -13,16 +14,24 @@ require 'memcachier'
 require 'digest/md5'
 
 #--------------Sinatra-Application---------------------------------
+
+config_file 'parameters.yml'
+
 configure do
   set :sessions, true
   set :inline_templates, true
   set :cache, Dalli::Client.new
-  uri = URI.parse('redis://toretto460:e2a5774a30709ac1448d8a7e39434ecf@barb.redistogo.com:9392/')
+  redis_connection_string = settings.redis_connection_string || ENV['REDIS_CONNECTION_STRING']
+  uri = URI.parse(settings.redis_connection_string)
   REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
 end
 
 use OmniAuth::Builder do
-  provider :facebook, '276684505778296','5c800d3d9c1c1e709d7195da93e7dce7', :scope => 'user_location,friends_location'
+  
+  facebook_id  = settings.facebook_id || ENV['FACEBOOK_ID']
+  facebook_key = settings.facebook_key || ENV['FACEBOOK_KEY']
+  provider :facebook, facebook_id, facebook_key, :scope => 'user_location,friends_location'
+  
   #for local usage this facebook app return at http://localhost:4567/
   #provider :facebook, '477713652248633','3cfa969935faf59a6705856bd4ba97ca'
 end
@@ -114,17 +123,17 @@ def find_or_create me, graph, friend
 
   if node.nil?
     node = graph.create_node label: friend['name'], :id => friend['id']
-
+    random_color = "%06x" % (rand * 0xffffff)
     friendlist = get_connections friend['id'], @graph
     unless friendlist.nil?
       friendlist.each do |f| 
         node_friend = graph.nodes[f['id']] || graph.create_node(label: f['name'], :id => f['id']) 
-        node_friend.connect_to node
-        node_friend.connect_to me
+        node.connect_to node_friend, :attr => {:color => random_color}
+        #node_friend.connect_to me
       end  
     end
   end
-  me.connect_to node
+  node.connect_to me, :attr => {:color => random_color}
   node
 end
 

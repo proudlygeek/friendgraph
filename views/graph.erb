@@ -12,17 +12,17 @@
       var sigInst = sigma.init(document.getElementById('sigma')).drawingProperties({
         defaultLabelColor: '#fff',
         defaultLabelSize: 9,
-        defaultEdgeColor: 'green',
-        defaultNodeColor: 'green',
-        defaultLabelBGColor: '#fff',
-        defaultLabelHoverColor: '#000',
-        defaultLabelFontSize: '5px', 
+        // defaultEdgeColor: 'green',
+        // defaultNodeColor: 'green',
+        defaultLabelBGColor: '#787878',
+        defaultLabelHoverColor: 'red',
+        defaultLabelFontSize: '6px', 
         labelThreshold: 6,
-        defaultEdgeType: 'straight'
+        defaultEdgeType: 'curve'
       }).graphProperties({
-        minNodeSize: 0.5,
-        maxNodeSize: 5,
-        minEdgeSize: 0.8,
+        minNodeSize: 3,
+        maxNodeSize: 3,
+        minEdgeSize: 1.8,
         maxEdgeSize: 1.8
       }).mouseProperties({
         maxRatio: 32
@@ -33,7 +33,7 @@
       sigInst.parseGexf('/facebook/friendlist.gexf');
      
 // Bind events :
-  var greyColor = '#C2C2C2';
+  var greyColor = '#787878';
   var blackColor = '#000';
   sigInst.bind('overnodes',function(event){
     var nodes = event.content;
@@ -52,7 +52,9 @@
         neighbors[e.source] = 1;
         neighbors[e.target] = 1;
       }
-    }).iterNodes(function(n){
+    });
+
+    sigInst.iterNodes(function(n){
       if(!neighbors[n.id]){
         if(!n.attr['grey']){
           n.attr['true_color'] = n.color;
@@ -65,6 +67,7 @@
         n.forceLabel = true;
       }
     }).draw(2,2,2);
+
   }).bind('outnodes',function(){
     sigInst.iterEdges(function(e){
       e.color = e.attr['grey'] ? e.attr['true_color'] : e.color;
