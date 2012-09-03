@@ -34,8 +34,11 @@ a.flat:visited {
 }
 
 .logo {
-	font: 110px 'vtks_animal_2regular', Arial, sans-serif;
-
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 50px;
+	height: 50px;
 }
 
 a.fonted{
