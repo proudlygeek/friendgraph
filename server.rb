@@ -23,6 +23,10 @@ configure do
   set :cache, Dalli::Client.new
 end
 
+configure :production do
+  require 'newrelic_rpm'
+end
+
 use OmniAuth::Builder do
   
   facebook_id  = ENV['FACEBOOK_ID'] || settings.facebook_id

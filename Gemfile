@@ -16,3 +16,7 @@ gem 'thin'
 group :development do
   gem 'shotgun'
 end
+
+group :production do
+	gem 'newrelic_rpm'
+end
