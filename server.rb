@@ -21,15 +21,15 @@ configure do
   set :sessions, true
   set :inline_templates, true
   set :cache, Dalli::Client.new
-  redis_connection_string = settings.redis_connection_string || ENV['REDIS_CONNECTION_STRING']
+  redis_connection_string =  ENV['REDIS_CONNECTION_STRING'] || settings.redis_connection_string
   uri = URI.parse(settings.redis_connection_string)
   REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
 end
 
 use OmniAuth::Builder do
   
-  facebook_id  = settings.facebook_id || ENV['FACEBOOK_ID']
-  facebook_key = settings.facebook_key || ENV['FACEBOOK_KEY']
+  facebook_id  = ENV['FACEBOOK_ID'] || settings.facebook_id 
+  facebook_key = ENV['FACEBOOK_KEY'] || settings.facebook_key
   provider :facebook, facebook_id, facebook_key, :scope => 'user_location,friends_location'
   
   #for local usage this facebook app return at http://localhost:4567/
