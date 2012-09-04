@@ -37,7 +37,7 @@ use OmniAuth::Builder do
   uri = URI.parse(redis_connection_string)
   REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
 
-  #for local usage this facebook app return at http://localhost:4567/
+  #for local usage this facebook app returns at http://localhost:4567/
   #provider :facebook, '477713652248633','3cfa969935faf59a6705856bd4ba97ca'
 end
 
@@ -93,7 +93,7 @@ get '/:provider/friendlist.gexf' do
   @node_me = graph.create_node label: @me['user_info']['info']['name'], :id => @me['user_info']['uid']
   
   @friends.each do |f|
-    find_or_create @node_me, graph, f
+    visit_friend_tree @node_me, graph, f
   end
 
   serializer = GEXF::XmlSerializer.new(graph)
@@ -124,7 +124,7 @@ end
 
 
 #------------node utilities----------------------------------------
-def find_or_create me, graph, friend 
+def visit_friend_tree me, graph, friend 
 
   node = graph.nodes[friend['id']]
 
@@ -136,13 +136,13 @@ def find_or_create me, graph, friend
       friendlist.each do |f| 
         node_friend = graph.nodes[f['id']] || graph.create_node(label: f['name'], :id => f['id']) 
         node.connect_to node_friend, :attr => {:color => random_color}
-        #node_friend.connect_to me
       end  
     end
   end
   node.connect_to me, :attr => {:color => random_color}
   node
 end
+#------------------------------------------------------------------
 
 #----------------getters with caching------------------------------
 def get_connections user_id, graph
