@@ -33,13 +33,15 @@ use OmniAuth::Builder do
   facebook_key = ENV['FACEBOOK_KEY'] || settings.facebook_key
   provider :facebook, facebook_id, facebook_key, :scope => 'user_location,friends_location'
   
+  redis_connection_string =  ENV['REDIS_CONNECTION_STRING'] || settings.redis_connection_string
+  uri = URI.parse(redis_connection_string)
+  REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+
   #for local usage this facebook app return at http://localhost:4567/
   #provider :facebook, '477713652248633','3cfa969935faf59a6705856bd4ba97ca'
 end
 
-  redis_connection_string =  ENV['REDIS_CONNECTION_STRING'] || settings.redis_connection_string
-  uri = URI.parse(redis_connection_string)
-  REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+
 
 get '/' do
   skip_auth
